@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>もし犯罪がなければ映画はなかった</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a2e;
+      --text-primary: #e0ddd5;
+      --text-secondary: #8a8a9a;
+      --accent: #4a9eff;
+      --accent-dim: #2a5a9a;
+      --gold: #c4a35a;
+      --chapter-border: #2a2a3e;
+      --serif: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+      --sans: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.95;
+      min-height: 100vh;
+    }
+
+    /* ─── Header ─── */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 100px 20px 80px;
+      background: linear-gradient(180deg, #1a2a4a 0%, #0f1a2f 100%);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(120,180,255,0.15) 0%, transparent 70%);
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      text-shadow: 0 2px 20px rgba(100,160,255,0.3);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .hero-sub {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      color: #b0c4de;
+      letter-spacing: 0.15em;
+    }
+    .hero-line {
+      width: 60px; height: 1px;
+      background: var(--gold);
+      margin: 28px auto 0;
+    }
+
+    /* ─── Digest Carousel ─── */
+    .carousel-wrap {
+      background: linear-gradient(180deg, #0f1a2f 0%, #0a0e18 100%);
+      padding: 24px 0 20px;
+      overflow: hidden;
+    }
+    .carousel-track {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 calc((100vw - min(85vw, 600px)) / 2);
+      scrollbar-width: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-slide {
+      flex: 0 0 min(85vw, 280px);
+      scroll-snap-align: center;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+      aspect-ratio: 3/2;
+    }
+    .carousel-slide:active { transform: scale(0.97); }
+    .carousel-slide img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .carousel-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      padding: 28px 12px 10px;
+      color: #fff;
+      font-size: 0.85rem;
+      font-family: var(--serif);
+      line-height: 1.4;
+    }
+    .carousel-ch {
+      display: inline-block;
+      font-size: 0.7rem;
+      color: var(--gold);
+      margin-right: 6px;
+      font-family: var(--sans);
+      letter-spacing: 0.06em;
+    }
+    .carousel-dots {
+      text-align: center;
+      padding-top: 12px;
+    }
+    .carousel-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      margin: 0 4px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .carousel-dot.active {
+      background: var(--gold);
+      transform: scale(1.3);
+    }
+    @media (min-width: 600px) {
+      .carousel-slide { flex: 0 0 280px; }
+      .carousel-track { padding: 0 calc((100vw - 900px) / 2); gap: 18px; }
+    }
+
+    /* ─── Navigation ─── */
+    .nav-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--chapter-border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow-x: auto;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+    }
+    .nav-bar .nav-title {
+      color: var(--gold);
+      font-weight: 700;
+      white-space: nowrap;
+      margin-right: 8px;
+    }
+    .nav-bar a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .nav-bar a:hover {
+      color: var(--accent);
+      background: rgba(74,158,255,0.1);
+    }
+
+    /* ─── TOC ─── */
+    .toc {
+      max-width: 700px;
+      margin: 60px auto 40px;
+      padding: 0 20px;
+    }
+    .toc h3 {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .toc-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 18px;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-left: 2px solid var(--chapter-border);
+      transition: all 0.25s;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+    }
+    .toc-item:hover {
+      border-color: var(--accent);
+      background: rgba(74,158,255,0.04);
+      padding-left: 24px;
+    }
+    .toc-num {
+      font-size: 0.75rem;
+      color: var(--accent-dim);
+      font-weight: 700;
+      min-width: 20px;
+    }
+
+    /* ─── Characters ─── */
+    .characters {
+      max-width: 700px;
+      margin: 40px auto 60px;
+      padding: 0 20px;
+    }
+    .characters h3 {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .char-card {
+      background: var(--bg-card);
+      border: 1px solid var(--chapter-border);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .char-name {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .char-meta {
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .char-meta span {
+      background: rgba(74,158,255,0.1);
+      padding: 1px 8px;
+      border-radius: 4px;
+    }
+    .char-appearance {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 6px;
+      border-left: 2px solid var(--chapter-border);
+      padding-left: 10px;
+    }
+    .char-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── Divider ─── */
+    .section-divider {
+      width: 40px; height: 1px;
+      background: var(--chapter-border);
+      margin: 0 auto;
+    }
+
+    /* ─── Chapter ─── */
+    .chapter {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 80px 20px;
+      border-top: 1px solid var(--chapter-border);
+    }
+    .chapter-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .chapter-number {
+      font-family: var(--sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--accent-dim);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .chapter-title {
+      font-family: var(--serif);
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .chapter-image {
+      margin: 0 -20px 40px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--chapter-border);
+    }
+    .chapter-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      opacity: 0.92;
+    }
+    .chapter-body p {
+      margin-bottom: 1.2em;
+      text-indent: 1em;
+      text-align: justify;
+    }
+    .chapter-body p:empty {
+      display: none;
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      text-align: center;
+      padding: 60px 20px;
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--chapter-border);
+    }
+
+    /* ─── Reading mode toggle ─── */
+    .mode-toggle {
+      position: fixed; bottom: 20px; right: 20px; z-index: 200;
+      background: var(--bg-card);
+      border: 1px solid var(--chapter-border);
+      color: var(--text-secondary);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+
+    /* --- TTS Read Aloud --- */
+    .tts-fab {
+      position: fixed; bottom: 80px; right: 20px; z-index: 200;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none;
+      font-size: 22px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tts-fab:hover { transform: scale(1.1); }
+    .tts-fab.speaking { background: #e74c3c; animation: tts-pulse 1.5s infinite; }
+    @keyframes tts-pulse {
+      0%,100% { box-shadow: 0 4px 16px rgba(231,76,60,0.4); }
+      50% { box-shadow: 0 4px 24px rgba(231,76,60,0.7); }
+    }
+    .tts-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(20,20,30,0.95); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--chapter-border);
+      padding: 10px 16px; display: none;
+      align-items: center; gap: 10px;
+      font-family: var(--sans); font-size: 0.85rem;
+    }
+    .tts-bar.active { display: flex; flex-wrap: wrap; }
+    .tts-bar button {
+      background: none; border: 1px solid var(--text-secondary);
+      color: var(--text-primary); border-radius: 6px;
+      padding: 6px 12px; cursor: pointer; font-size: 0.8rem;
+      white-space: nowrap; transition: all 0.2s;
+    }
+    .tts-bar button:hover { border-color: var(--accent); color: var(--accent); }
+    .tts-bar .tts-info {
+      flex: 1; color: var(--text-secondary);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      min-width: 80px;
+    }
+    .tts-bar .tts-speed {
+      display: flex; align-items: center; gap: 4px;
+      color: var(--text-secondary); font-size: 0.75rem;
+    }
+    .tts-bar .tts-speed input { width: 60px; accent-color: var(--accent); }
+    body.light .tts-bar {
+      background: rgba(245,245,240,0.95); border-top-color: #ddd;
+    }
+    body.light .tts-bar button { border-color: #999; color: #333; }
+    body.light .tts-bar .tts-info { color: #666; }
+
+    /* ─── Light mode ─── */
+    body.light {
+      --bg-primary: #f5f0e8;
+      --bg-secondary: #ebe5d9;
+      --bg-card: #fff;
+      --text-primary: #2a2a2a;
+      --text-secondary: #6a6a6a;
+      --chapter-border: #d5cfc3;
+      --accent: #2563eb;
+      --accent-dim: #6b9eff;
+      --gold: #8a6d2b;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      body { font-size: 15px; }
+      .chapter { padding: 50px 16px; }
+    }
+
+    /* ─── Scroll progress ─── */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; z-index: 200;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      width: 0%;
+      transition: width 0.1s;
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" id="progress"></div>
+
+  <header class="hero">
+    <h1 class="hero-title">もし犯罪がなければ映画はなかった</h1>
+    <p class="hero-sub">GENERATED WITH LOCAL AI — OLLAMA + STABLE DIFFUSION</p>
+    <div class="hero-line"></div>
+  </header>
+
+  <nav class="nav-bar">
+    <span class="nav-title">目次</span>
+    <a href="#chapter-1">第1章</a><a href="#chapter-2">第2章</a><a href="#chapter-3">第3章</a><a href="#chapter-4">第4章</a><a href="#chapter-5">第5章</a><a href="#chapter-6">第6章</a>
+  </nav>
+
+  <div class="toc">
+    <h3>— 目次 —</h3>
+        <a href="#chapter-1" class="toc-item"><span class="toc-num">1</span><span class="toc-label">映画が存在しない世界の日常</span></a>
+        <a href="#chapter-2" class="toc-item"><span class="toc-num">2</span><span class="toc-label">謎めいた手がかり</span></a>
+        <a href="#chapter-3" class="toc-item"><span class="toc-num">3</span><span class="toc-label">歴史の中の空白</span></a>
+        <a href="#chapter-4" class="toc-item"><span class="toc-num">4</span><span class="toc-label">暴力の象徴</span></a>
+        <a href="#chapter-5" class="toc-item"><span class="toc-num">5</span><span class="toc-label">犯罪の記憶</span></a>
+        <a href="#chapter-6" class="toc-item"><span class="toc-num">6</span><span class="toc-label">犯罪と映画の象徴的共存</span></a>
+  </div>
+
+  <div class="characters">
+    <h3>— 登場人物 —</h3>
+    <div class="char-grid">
+      <div class="char-card">
+        <div class="char-name">織田圭一郎</div>
+        <div class="char-meta"><span>主人公</span><span>25歳</span></div>
+        <div class="char-appearance">真っ黒い髪が目を引く。青緑色の眼差しは鋭さと深みを持ち、その表情から好奇心と不安定さが窺える。</div>
+        <div class="char-desc">好奇心旺盛で、世界の隠された側面に強い興味を持つ若き探究家</div>
+      </div>
+      <div class="char-card">
+        <div class="char-name">山田由利子</div>
+        <div class="char-meta"><span>サブキャラ</span><span>30歳</span></div>
+        <div class="char-appearance">明るい色の髪と穏やかな笑顔。彼女の存在感は控えめで、しかし確かなものがある。</div>
+        <div class="char-desc">温厚で知的。犯罪についての知識が豊富な学者</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <main>
+
+    <section class="chapter" id="chapter-1">
+      <div class="chapter-header">
+        <span class="chapter-number">第1章</span>
+        <h2 class="chapter-title">映画が存在しない世界の日常</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>第1章　映画が存在しない世界の日常</p>
+
+        <p>朝、窓ガラスに貼られた透明なカーテン越しに薄曇りの空が見える。雨粒が静かに降っている音と遠くで鳴る電車の汽笛が混ざって聞こえてくる。アパートの一室は冷たく湿った朝の息を吸い込む。</p>
+
+        <p>圭一郎はベッドから起き上がり、足元にあるスリッパに足を入れた。</p>
+        <p>「今日もテレビゲームか」と彼は呟き、部屋を見回す。壁一面のモニターが目に入る。一日の大半を占めるそれは、映像と音楽で満ち溢れている。</p>
+
+        <p>しかし圭一郎には違和感があった。「何か欠けている」。</p>
+        <p>その予感に囚われながらも、彼は生活を続ける。</p>
+
+        <p>午後、街へ出る。人々の声が通りいっぱいだ。彼らはゲームやテレビ番組の中でしか会話をしていないかのような無表情で歩く。圭一郎はその背中を見つめ、何かを探していた。</p>
+        <p>「誰も答えを持ってないんだ」と彼は口ずさむ。</p>
+
+        <p>カフェに入ったとき、窓ガラスに映る自分の顔が目に入る。青緑色の瞳と黒髪が微かに光っていた。彼は鏡を指で叩いた。「何か見つけるのは難しいだろうな」。</p>
+        <p>コーヒーを一口啜ると、香りがあたかもその問いかけを反芻しているようだった。</p>
+
+        <p>カフェから出て、圭一郎は通り沿いの映画館へ向かった。昔ながらの大げさな看板が掲示され、「上映中」という言葉だけが浮かんでいた。</p>
+        <p>しかし中に入ることはなかった。「存在しないものは触れることもない」彼は独りごちる。</p>
+
+        <p>街頭では、テレビやゲームから受け取った情報と自身の心地良さが全てであると考える人々が居た。圭一郎はそんな彼らを通り過ぎて歩く。彼だけが「何か欠けている」と感じる空虚感に振り回されていた。</p>
+        <p>風は冷たく、雨粒も止まず。</p>
+
+        <p>映画館から少し離れた路地を歩いているとき、突然目に入った光があった。「その看板が何なのか」圭一郎の心には疑問符が浮かんだ。彼は手元を見る。掌には汗が滲んでいた。</p>
+        <p>「答えなんてどこにもない」</p>
+
+        <p>雨粒がネオンに反射し、青と赤が混ざり合うように流れ落ちる。圭一郎はその光景を眺めながらため息をつく。「もし映画があったら」と彼は呟き、足下を見つめた。</p>
+
+        <p>夜遅くになっても、街の灯りは消えない。</p>
+        <p>冷たい風に吹かれて、圭一郎は部屋に戻る。窓から外へ視線を投げかけると、月明かりが薄暗い通りを照らしていた。「答えなんてどこにもない」と彼は思う。</p>
+
+        <p>翌朝、窓ガラスの向こうには晴れた空が広がっていた。</p>
+        <p>圭一郎はベッドに横たわり、その光を見つめた。何も言わずに、ただ静かに思考を巡らせていた。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-2">
+      <div class="chapter-header">
+        <span class="chapter-number">第2章</span>
+        <h2 class="chapter-title">謎めいた手がかり</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>第2章　謎めいた手がかり</p>
+
+        <p>雨粒が、アスファルトの路面に散らばる。遠くから聞こえるエンジン音と静かな水滴の落ちる音だけがこの街の息づかいだ。圭一郎は傘を片手持ちし、薄暗い通りを行き交う人々の中へ溶け込んでいく。</p>
+
+        <p>「ここに映画館があったんだよ」</p>
+        <p>彼女の声が遠くから聞こえてくる。振り返るとそこには由利子の姿はない。しかし空気中からその言葉は伝えられ、圭一郎の胸をつついた。</p>
+
+        <p>古いビル群の中へと足を進め、朽ち果てた映画館の壁面に目を凝らす。窓ガラスが割れかけ、中の空間が覗ける。床からは湿った土埃と共に腐敗した音が漏れてくる。圭一郎は鼻先をつまんだ。</p>
+
+        <p>「ここにあるべきものが存在しない」</p>
+        <p>その言葉から逃げるように、彼はさらに奥へと進む。</p>
+
+        <p>細い通路の角を曲がるとそこには大きなスクリーンがあったはずだがもう跡形もない。代わりに壁一面に広がる剥き出しになった配線や断片的な映像フレームだけが存在する。手元にある懐中電灯で微かに照らすと、過去の色褪せたフィルムスライドを見ているようだ。</p>
+
+        <p>「何かここには残っている」</p>
+        <p>圭一郎は呟くように囁きながら壁をなぞる指先が止まった。手垢と鉛筆跡を纏った小さなポスターがある。それを見つけ、彼の目からは光が消えたかのように黒々とした深みへ引き込まれていく。</p>
+
+        <p>「過去の記憶を救え」と書かれている。</p>
+        <p>その言葉は無数にある廃墟の中でただ一つ輝いていた。</p>
+
+        <p>圭一郎は手書きの文字を見つめながらゆっくりと息をする。ポスターにはさらに小さなメモが添えられていた。「この映画館で上映された最後の一作」</p>
+        <p>「過去を封じ込められたもの、それを解き放つために」</p>
+
+        <p>圭一郎は胸の中で何かが膨らむのに気付いた。</p>
+        <p>それが何なのかわからない。</p>
+
+        <p>彼の視線はスクリーンへと向かい、そこにはもう何も映らない黒い穴があるだけだった。その漆黒の中から微かな光が漏れ出しているような錯覚に囚われる。</p>
+        <p>圭一郎はそれをじっと見つめ続けたまま固まったままである。</p>
+
+        <p>「これは何？」</p>
+        <p>不意の声が彼を驚かせる。</p>
+        <p>振り返ると、そこには由利子の姿があった。雨粒を纏った髪とその穏やかな表情。圭一郎はポスターを持ち上げて見せた。</p>
+        <p>「何もなかったはずなのに」</p>
+        <p>彼女もまた静寂の中へ呟くように語り始めた。</p>
+
+        <p>二人は何千もの言葉が交わされる中で、ただ互いの存在を確認するだけだった。この場所に何があったのか、それはもう過去の記憶から消え去ってしまったか。</p>
+        <p>しかし圭一郎はポスターを見つめたまま黙っていた。</p>
+        <p>その先には答えはない。</p>
+
+        <p>彼等の視線が交差し合う中で、遠くへと聞こえてくる雨粒の音だけが響き渡る。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-3">
+      <div class="chapter-header">
+        <span class="chapter-number">第3章</span>
+        <h2 class="chapter-title">歴史の中の空白</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>第3章　歴史の中の空白</p>
+
+        <p>雨粒が石畳に叩きつけ、冷たい風が古い建物の間を行ったり来たりする。圭一郎と由利子は静かな資料館の内部へ足を踏み入れた。木製の床は湿っており、古びた革靴からの音が小さく響いた。</p>
+        <p>「ここに来るまでの道すがら、あなたは何を考えていたんだ？」</p>
+        <p>由利子は柔らかく微笑んで問いかける。圭一郎は資料館内で微かな湿度を感じて頬を撫でる。</p>
+        <p>「ただ、思い出すだけだよ」</p>
+        <p>彼の視線が旧式なスクリーンに固定される。「あれから何年経ったんだ？」</p>
+        <p>由利子は書棚の中を探りながら答えた。「四十年前。正確には思い出せない」と微睡んだ様子で付け加える。</p>
+        <p>古い資料館内、壁一面にある膨大な数量の本とポスターが視界を埋め尽くす。圭一郎たちはその中から映画に関するものを選び出す。</p>
+        <p>「これらの記録はどのようにしてここに？」</p>
+        <p>彼女の手元を見つめる。</p>
+        <p>「残されたものすべてを集めました」と静かに答える。「人々の忘れ去った過去を保存するのが私の役割」</p>
+        <p>二人は古い本を開き、黄ばんだ紙面から時代遅れな映画情報を読み解く。それは彼らが知っている現実とは別の世界への窓でありながらも、それ自体が一つの幻影に過ぎない。</p>
+        <p>「しかし、これがすべてを説明しないでしょ？」圭一郎は頷きつつ問う。「なぜこの産業は消えてしまったんだ？」</p>
+        <p>由利子の表情が引きつり、「正確な原因不明。ただ、一部の人間には伝わるはず」と呟いた。</p>
+        <p>「それが何だったのか？誰に？」とさらに追及する。</p>
+        <p>彼女は資料館内で視線を彷徨わせた。「特殊な人々。彼らだけがそれを経験し続けている」</p>
+        <p>二人の背後で、古い映画ポスターやパンフレットが微かに揺れる音が聞こえる。</p>
+        <p>「その人間たちについてもっと教えて？」圭一郎は静かな声で尋ねた。「誰だったのか？彼らは何をしたんだ？」</p>
+        <p>由利子は資料館の一角へと彼を案内する。そこには、数々の古い映画に関する書類が積み重なっていた。</p>
+        <p>「あなたたちもそれに該当しうる」と微苦笑しながら告げる。「覚えていない過去があるなら」</p>
+        <p>二人は静かに並んだ書類群を見つめ合う。それらの中から特定の一冊を手にとって、圭一郎の胸には複雑な感情が湧き上がった。</p>
+        <p>「ここで何を見つけたのか？」由利子の目線に問い返す。</p>
+        <p>彼女は小さく頷いて答える。「あなたたちの過去」</p>
+        <p>この場所で出会った資料館の中から得られた知識、そして失われた記憶に対する新たな視点。それは圭一郎にとって一つの始まりだった。</p>
+        <p>「私たちが何をすべきか？」尋ねる声もまた静かなものだ。</p>
+        <p>由利子は資料館の外へと彼を導く。「その答えを見つけることが目的」</p>
+        <p>雨粒に濡れた石畳、かつてあった映画館跡地。二人の足音だけが響き、歴史の中の空白を探求する旅が始まったのである。</p>
+        <p>圭一郎は由利子との会話を振り返りながら、資料館を後にした。「私たちは何を見つけるべきだ？」彼女に問いかけていた問いが頭から離れない。</p>
+
+        <p>雨粒が石畳に叩きつけ、冷たい風が古い建物の間を行ったり来たりする。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-4">
+      <div class="chapter-header">
+        <span class="chapter-number">第4章</span>
+        <h2 class="chapter-title">暴力の象徴</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>第4章　暴力の象徴</p>
+
+        <p>雨が止んだ。灰色の雲が薄曇りに緩むにつれて、街には少し湿度があった。古いアパートメントの一室で、窓ガラス越しの光は暖かさを帯びている。</p>
+
+        <p>圭一郎と由利子は、資料館から戻った後すぐにインタビューを予約した映画監督との会話を待ち構えていた。</p>
+        <p>「先日も伺いましたが」と、圭一郎は茶色い革製のノートを開きながら口火を切る。「あなたが制作していた当時の状況について、もう少し詳しく教えていただけますか？」</p>
+
+        <p>中年の男性は微睡んだような目で答えた。「その時代には、映画を作るのも生き残り競争だった。警察や権力者から追われる生活。夜通し逃げ回って、次の日また撮影という日々だ」</p>
+        <p>「それでも作られた作品が何故こうも印象的なのですか？」由利子が質問を重ねた。</p>
+        <p>監督は口角を見せて笑った。「暴力は表現の源だよ」</p>
+
+        <p>会話が一瞬止まる。窓から覗く景色、薄曖昧な青空と風に揺れる樹木の葉っぱ。</p>
+
+        <p>「だからこそ」と圭一郎、「その時代特有の映画には、人々が抱える深い感情や願望が描かれている」</p>
+        <p>監督は彼を見つめ返し、「そうだ。あなた達世代にとって、それがまるで遠い異国の物語のように見えるのも無理はないよ」</p>
+
+        <p>窓際に置かれた花瓶からは、静かな香りを放っていた。室内の空気と混ざって心地よい。</p>
+
+        <p>圭一郎は頷きながらその言葉を考える。「それでも私たちは探求し続けなければなりませんね」</p>
+        <p>由利子が椅子から立ち上がり、「次に会うときまで」と微笑んで部屋を出ようとした。</p>
+        <p>監督もまた彼らを見送り、最後の挨拶と共に扉へと向かっていった。</p>
+
+        <p>風が窓ガラス越しに入ってきた。冷たさは心地よいものではなく、少し寂しさを感じさせた。</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-5">
+      <div class="chapter-header">
+        <span class="chapter-number">第5章</span>
+        <h2 class="chapter-title">犯罪の記憶</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>第5章　犯罪の記憶</p>
+
+        <p>雨粒が窓ガラスに滴る音。夜間の街路、照明灯からの光が水たまりで拡散する様子。圭一郎は古い映像を探し出すため、静かな図書館の一室を借りていた。</p>
+
+        <p>「ここにあるはずです」</p>
+
+        <p>彼は冷たいタイル床を踏み鳴らしながらカーテンに覆われた窓際のテーブルへと向かう。揺れる雨粒が外から差し込む僅かな光を受け、まるで舞い散る蝶々のように見える。</p>
+
+        <p>「古いビデオカセットだ」</p>
+
+        <p>その一連のプロセスは繰り返しだった。記憶を呼び起こすために何度も同じ手順を通じて過去を探求する日々が続いたのである。</p>
+
+        <p>圭一郎は、冷たく湿気た壁に寄りかかりながらカセットレコーダーの電源を入れる。モーター音とビデオテープ流れる軽い摩擦音が静寂を揺さぶる。</p>
+
+        <p>「昔見た映画」</p>
+
+        <p>その言葉だけでも彼の心には色とりどりな思い出が浮かび上がる。しかし、そこから実際に映像を取り出すことは果たされていないのだ。それはまるで夢を見るようなものでありながらも現実ではないという奇妙なものだった。</p>
+
+        <p>レコーダーは微細な音を立ててカセットテープを巻き取り始める。一瞬の静寂が続くと、画面には灰色に塗り潰された映像が浮かび上がる。</p>
+
+        <p>「これは」</p>
+
+        <p>言葉では言い表せない何かがある。まるで壁を通して聞こえるような遠くから響いてくる音楽や声。それが彼をあの頃へといざなっていく。</p>
+
+        <p>その中でも特に、圭一郎はある場面に心惹かれ続けてきた。「危機」と「闘い」が渦巻く瞬間である。それは犯罪と暴力の緊張感で彩られた映像群だった。</p>
+
+        <p>画面には男たちが互いに向き合い、火花を散らすシーンがあった。彼らは拳銃やナイフを持ちあぐねて動かない。その静止画のような一コマから始まった動きが徐々に加速し、戦闘が始まるのである。映像の奥深くには緊張感と恐怖が渦巻き、それは観客を引き込む。</p>
+
+        <p>圭一郎は画面を見つめながら息を呑む。その中に自身も組み込まれているような錯覚に陥る。「これは何だろう」</p>
+
+        <p>「暴力と共存してきた映画」</p>
+
+        <p>ふいに関連した記憶が脅威と美しさの入り交じった形で彼の頭の中に蘇ってきた。</p>
+
+        <p>窓枠から差し込む雨粒は、その薄明かりを浴びて青白く光る。遠くで聞こえる轟音のような車通りの音とも相まって、図書館の一室がまるで映画のワンシーンであるかのように感じられた。</p>
+
+        <p>「だが」</p>
+
+        <p>圭一郎は視線をカセットレコーダーから上げると、窓外を見やった。雨粒たちは次々と地面に落ちていく。</p>
+
+        <p>圭一郎は静寂の中で自身の胸奥にある何かを感じていた。「これは映画だというのか」 彼がそう考える瞬間もまた、「しかし」という言葉と共に始まっていた。</p>
+        <p>彼はそのシーンを凝視し続ける。雨粒たちは、いつしか彼を見つめているかのように見えた。</p>
+
+        <p>「だが」</p>
+
+        <p>圭一郎の胸には何もない。ただ虚ろな空間だけがある。</p>
+
+        <p>空気が静寂に包まれる中、「探求」という言葉が頭の中に浮かぶ。「しかし」その先にあるものはまだ何もなかった。雨粒たちは地面に落ち、そしてまた新たな生命を宿す。</p>
+        <p>圭一郎は再びカセットレコーダーの前に座り、視線を再度映像へと向けた。</p>
+
+        <p>画面には依然として男たちが互いに対峙していた。「しかし」</p>
+
+        <p>その先にあるものはまだ何も明らかではなかった。彼自身もまた、この謎を探求する旅路に新たな一歩を踏み出そうとする瞬間だった。</p>
+        <p>圭一郎はただ静かに見つめ続けた。</p>
+
+        <p>「これは映画だというのか」 彼の胸には疑問が渦巻く。「しかし」</p>
+
+        <p>それが何であるか、まだ彼自身も未解決であり、その答えを探し続けることだけが唯一確かなものであった。雨粒たちもまた、時を刻み進む圭一郎を見守っていた。</p>
+        <p>画面は変わらぬままに輝いていた。</p>
+
+        <p>「だが」</p>
+        <p>圭一郎の胸には何も無かった。「しかし」</p>
+
+        <p>彼自身と共に、謎と答えとの間にある虚ろな空間が、静寂と共に存在し続けていく。雨粒たちはいつまでも地面に向かって落下を続ける。</p>
+        <p>画面は依然として燃え上がる火花のように輝いていた。</p>
+
+        <p>「だが」</p>
+        <p>圭一郎の胸には何も無かった。「しかし」</p>
+
+        <p>彼自身と共に、その先にあるものはまだ何一つ明らかではなかったが、「探求」という言葉が静寂の中で響き続けた。雨粒たちもまた、時を刻む圭一郎を見守っていた。</p>
+        <p>画面は変わらぬままに輝いていた。</p>
+
+        <p>「だが」</p>
+        <p>圭一郎の胸には何も無かった。「しかし」</p>
+
+        <p>その先にあるものはまだ何一つ明らかではなかったが、「探求」という言葉と共に謎への旅路が始まったのであった。雨粒たちは、彼を見守るように静かに向かって落下を続ける。</p>
+        <p>画面は依然として燃え上がる火花のように輝いていた。</p>
+
+        <p>圭一郎の胸には何も無かった。「しかし」</p>
+
+        <p>その先にあるものはまだ何一つ明らかではなかったが、「探求」という言葉と共に謎への旅路が始まったのであった。雨粒たちは、彼を見守るように静かに向かって落下を続ける。</p>
+        <p>画面は変わらぬままに輝いていた。</p>
+
+        <p>圭一郎の胸には何も無かった。「しかし」</p>
+      </div>
+    </section>
+    <section class="chapter" id="chapter-6">
+      <div class="chapter-header">
+        <span class="chapter-number">第6章</span>
+        <h2 class="chapter-title">犯罪と映画の象徴的共存</h2>
+      </div>
+      
+      <div class="chapter-body">
+        <p>第6章　犯罪と映画の象徴的共存</p>
+
+        <p>冬の夜、冷たい風が吹き荒れる街。月光に照らされない暗い影が長く伸びている。圭一郎は薄暗い通りでひとり歩いている。彼を導いたのは古い地図しかなかった。行き止まりとも見える路地には老舗の映画館があった。</p>
+
+        <p>建物の外観は埃と苔に覆われ、窓ガラスが割れたまま放棄されたかのように見えた。</p>
+        <p>「ここだな」と彼は呟いた。その声もまた孤独なものだった。</p>
+
+        <p>入口を開けたときには、古い木製扉から塵と共に懐旧の匂いが漂ってきた。館内に入ると足音が薄暗く長い通路に反響する。天井からは漏れ洩れる月光が埃を浮き立てる。</p>
+        <p>「ここはもう映画を見るためだけには使われないんだよ」</p>
+
+        <p>突然、遠方からピアノの調べが聴こえてきた。</p>
+
+        <p>圭一郎は音楽が聞こえる方向へと進む。その旋律は寂しげな哀調を持ちながらもどこか懐かしさを感じさせるものだった。</p>
+        <p>「誰だ？ここにいる人間は」</p>
+        <p>彼の足元では、壁から一本一本剥げ落ちたペンキが細い道を埋めている。</p>
+
+        <p>演奏が始まった場所まで辿り着くとそこには舞台があった。薄暗さの中に青白い月光だけが差し込んでいる。</p>
+        <p>「誰もいないのか？」彼は静かに問いかけ、その質問の答えを探しながら一歩前に進む。</p>
+
+        <p>舞台上では、一台の古いピアノがあり、鍵盤を弾く手がある。しかし、それが誰のものなのか見当たらなかった。</p>
+        <p>「これは一体……」</p>
+
+        <p>演奏が止まったときには、月光もまた静寂の中に消え去ったかのように思えた。圭一郎はその旋律に聞き入っていた自分が不気味さを感じていた。</p>
+
+        <p>彼はゆっくりと舞台に向かい、ピアノの前に跪いた。</p>
+        <p>「誰かいるのか？」</p>
+        <p>すると、ピアノが再び音を奏で始めた。それは孤独な訴えのようなものだった。</p>
+
+        <p>圭一郎は静寂の中に耳を澄ませた。その旋律から語られるものは人々が忘れてしまった危機感と闘いだった。</p>
+        <p>「ここには何か大切なものが眠っているんだ」</p>
+        <p>彼の手先が、ピアノの鍵盤に触れようとしていた。</p>
+
+        <p>それはまるで古いフィルムのコマのようにゆっくり動き出す。圭一郎は無意識に指を動かし、その旋律と共に過去と未来を行き来していた。</p>
+        <p>「何かを探しているのか？」</p>
+        <p>彼の心には答えがすでに存在したように思えた。</p>
+
+        <p>ピアノの音色だけが響く空間の中で、圭一郎は何者かとの対話を続けた。それは同時に自身との話でもあった。その問いに対する答えはまだ出ていなかったが、彼の中に何かが始まる予感があった。</p>
+        <p>「ここからすべてが始まったんだ」</p>
+
+        <p>演奏が終わりを告げるときには夜もまた深くなっていた。</p>
+
+        <p>月明かりの下で、圭一郎は再び歩き出した。後方ではピアノ音だけが風に乗って聞こえてくる。</p>
+        <p>「映画とは何か？」</p>
+        <p>彼の中にある問い掛けに新たな答えを見つける旅が始まる予感があった。</p>
+        <p>それ以上は何も語らず、ただ静寂の夜を進む足取りだった。</p>
+
+        <p>圭一郎はその先へと目指す道を見つけたように思えた。しかし、まだ何も明らかになっていないという事実は彼の中にある問い掛けを深くした。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>もし犯罪がなければ映画はなかった</p>
+    <p>Generated locally with Ollama + Stable Diffusion</p>
+  </footer>
+
+
+  <button class="tts-fab" id="ttsFab" onclick="ttsToggle()" title="Read aloud">
+    <span id="ttsFabIcon">&#x1f50a;</span>
+  </button>
+  <div class="tts-bar" id="ttsBar">
+    <button onclick="ttsPause()" id="ttsPauseBtn">&#x23f8;</button>
+    <button onclick="ttsStop()">&#x23f9;</button>
+    <button onclick="ttsPrev()">&#x23ee;</button>
+    <button onclick="ttsNext()">&#x23ed;</button>
+    <span class="tts-info" id="ttsInfo">Ready</span>
+    <span class="tts-speed">
+      <input type="range" id="ttsSpeed" min="0.5" max="2.0" step="0.1"
+             value="1.0" onchange="ttsSetSpeed(this.value)" />
+      <span id="ttsSpeedVal">1.0x</span>
+    </span>
+  </div>
+
+  <button class="mode-toggle" onclick="toggleMode()">🌗 表示切替</button>
+
+  <script>
+    // Reading mode
+    function toggleMode() {
+      document.body.classList.toggle('light');
+      localStorage.setItem('mode', document.body.classList.contains('light') ? 'light' : 'dark');
+    }
+    if (localStorage.getItem('mode') === 'light') document.body.classList.add('light');
+
+    // Scroll progress
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progress').style.width = pct + '%';
+    });
+
+    // === TTS (Web Speech API) ===
+    const synth = window.speechSynthesis;
+    let ttsChs = [], ttsI = 0, ttsRate = 1.0, ttsOn = false, ttsPd = false;
+
+    document.querySelectorAll('.chapter').forEach((sec, i) => {
+      const b = sec.querySelector('.chapter-body');
+      const t = sec.querySelector('.chapter-title');
+      if (b) ttsChs.push({
+        title: t ? t.textContent : ('Ch.' + (i+1)),
+        text: b.textContent.trim(), el: sec
+      });
+    });
+
+    function ttsToggle() {
+      if (!synth) { alert('Speech not supported'); return; }
+      if (ttsOn) { ttsStop(); return; }
+      const sy = window.scrollY + window.innerHeight / 3;
+      let cl = 0;
+      ttsChs.forEach((c, i) => { if (c.el.offsetTop <= sy) cl = i; });
+      ttsI = cl; ttsOn = true; ttsPd = false;
+      document.getElementById('ttsFab').classList.add('speaking');
+      document.getElementById('ttsFabIcon').innerHTML = '&#x23f9;';
+      document.getElementById('ttsBar').classList.add('active');
+      _ttsRead();
+    }
+
+    function _ttsRead() {
+      if (ttsI >= ttsChs.length) { ttsStop(); return; }
+      synth.cancel();
+      const ch = ttsChs[ttsI];
+      document.getElementById('ttsInfo').textContent = ch.title;
+      ch.el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Split by Japanese sentence endings for reliable playback
+      const sents = ch.text.match(/[^。！？
+]+[。！？]?/g) || [ch.text];
+      let si = 0;
+
+      function next() {
+        if (!ttsOn) return;
+        if (si >= sents.length) {
+          ttsI++;
+          if (ttsI < ttsChs.length) setTimeout(_ttsRead, 800);
+          else ttsStop();
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(sents[si].trim());
+        u.lang = 'ja-JP'; u.rate = ttsRate;
+        const vs = synth.getVoices();
+        const jv = vs.find(v => v.lang && v.lang.startsWith('ja'));
+        if (jv) u.voice = jv;
+        u.onend = () => { si++; next(); };
+        u.onerror = () => { si++; next(); };
+        synth.speak(u);
+      }
+      next();
+    }
+
+    function ttsPause() {
+      if (!ttsOn) return;
+      if (ttsPd) {
+        synth.resume(); ttsPd = false;
+        document.getElementById('ttsPauseBtn').innerHTML = '&#x23f8;';
+      } else {
+        synth.pause(); ttsPd = true;
+        document.getElementById('ttsPauseBtn').innerHTML = '&#x25b6;';
+      }
+    }
+
+    function ttsStop() {
+      synth.cancel(); ttsOn = false; ttsPd = false;
+      document.getElementById('ttsFab').classList.remove('speaking');
+      document.getElementById('ttsFabIcon').innerHTML = '&#x1f50a;';
+      document.getElementById('ttsBar').classList.remove('active');
+      document.getElementById('ttsInfo').textContent = 'Ready';
+      document.getElementById('ttsPauseBtn').innerHTML = '&#x23f8;';
+    }
+
+    function ttsNext() { if (ttsOn && ttsI < ttsChs.length - 1) { ttsI++; _ttsRead(); } }
+    function ttsPrev() { if (ttsOn && ttsI > 0) { ttsI--; _ttsRead(); } }
+    function ttsSetSpeed(v) {
+      ttsRate = parseFloat(v);
+      document.getElementById('ttsSpeedVal').textContent = v + 'x';
+    }
+    if (synth) synth.onvoiceschanged = () => synth.getVoices();
+
+    /* ─── Carousel ─── */
+    (function() {
+      const track = document.getElementById('carouselTrack');
+      if (!track) return;
+      const dots = track.parentElement.querySelectorAll('.carousel-dot');
+      const slides = track.querySelectorAll('.carousel-slide');
+      if (slides.length < 1) return;
+      function updateDots() {
+        const sw = slides[0].offsetWidth + 14;
+        const idx = Math.round(track.scrollLeft / sw);
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+      track.addEventListener('scroll', updateDots, { passive: true });
+      dots.forEach(d => d.addEventListener('click', () => {
+        const sw = slides[0].offsetWidth + 14;
+        track.scrollTo({ left: parseInt(d.dataset.idx) * sw, behavior: 'smooth' });
+      }));
+      let paused = false, timer = setInterval(() => {
+        if (paused) return;
+        const sw = slides[0].offsetWidth + 14;
+        const mx = track.scrollWidth - track.clientWidth;
+        const nx = track.scrollLeft + sw;
+        track.scrollTo({ left: nx > mx ? 0 : nx, behavior: 'smooth' });
+      }, 4000);
+      track.addEventListener('touchstart', () => { paused = true; clearInterval(timer); }, { passive: true });
+      track.addEventListener('touchend', () => {
+        paused = false;
+        timer = setInterval(() => {
+          if (paused) return;
+          const sw = slides[0].offsetWidth + 14;
+          const mx = track.scrollWidth - track.clientWidth;
+          const nx = track.scrollLeft + sw;
+          track.scrollTo({ left: nx > mx ? 0 : nx, behavior: 'smooth' });
+        }, 4000);
+      }, { passive: true });
+    })();
+
+  </script>
+</body>
+</html>
